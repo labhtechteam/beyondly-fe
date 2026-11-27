@@ -1,5 +1,9 @@
-// Base URL of the Django API. Change this if the backend runs elsewhere.
-var BEYONDLY_API_BASE_URL = "http://127.0.0.1:8000/api";
+// Base URL of the Django API: production API when served from www.beyondly.io,
+// dev API everywhere else.
+var BEYONDLY_API_HOST = window.location.hostname === "www.beyondly.io"
+  ? "api.beyondly.io"
+  : "devapi.beyondly.io";
+var BEYONDLY_API_BASE_URL = "https://" + BEYONDLY_API_HOST + "/api";
 var BEYONDLY_TOKEN_STORAGE_KEY = "beyondly_access_token";
 
 // Reads the currently stored bearer token, or "" if the user is signed out.
