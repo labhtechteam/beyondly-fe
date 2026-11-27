@@ -1,4 +1,5 @@
-var PHONE_NUMBER_PATTERN = /^\+91[6-9]\d{9}$/;
+var PHONE_COUNTRY_CODE = "+91";
+var PHONE_NUMBER_PATTERN = /^[6-9]\d{9}$/;
 var PAN_NUMBER_PATTERN = /^[A-Z]{5}\d{4}[A-Z]$/;
 var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -77,11 +78,12 @@ function handleOtpVerified(accessToken, redirectTo) {
 // Step 1a: send an OTP to the entered phone number.
 function bindSendPhoneOtp() {
   $("#sendPhoneOtpBtn").on("click", function () {
-    var phoneNumber = $("#signupPhone").val().trim();
-    $("#signupPhoneError").toggle(!PHONE_NUMBER_PATTERN.test(phoneNumber));
-    if (!PHONE_NUMBER_PATTERN.test(phoneNumber)) {
+    var localNumber = $("#signupPhone").val().replace(/\D/g, "");
+    $("#signupPhoneError").toggle(!PHONE_NUMBER_PATTERN.test(localNumber));
+    if (!PHONE_NUMBER_PATTERN.test(localNumber)) {
       return;
     }
+    var phoneNumber = PHONE_COUNTRY_CODE + localNumber;
 
     hideSignupError();
     var $btn = $(this).prop("disabled", true);

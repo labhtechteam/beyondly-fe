@@ -88,8 +88,11 @@
           <p class="text-muted-custom mb-3">Enter your mobile number to receive a one-time verification code.</p>
           <div class="mb-3">
             <label class="form-label-custom" for="signupPhone">Mobile Number</label>
-            <input type="tel" id="signupPhone" class="form-control form-control-custom" placeholder="+919876543210" />
-            <div class="field-error" id="signupPhoneError">Enter a valid Indian mobile number, e.g. +919876543210.</div>
+            <div class="input-group phone-input-group">
+              <span class="input-group-text phone-country-code" id="signupPhonePrefix">+91</span>
+              <input type="tel" id="signupPhone" class="form-control form-control-custom" placeholder="9876543210" maxlength="10" inputmode="numeric" autocomplete="tel-national" aria-describedby="signupPhonePrefix" />
+            </div>
+            <div class="field-error" id="signupPhoneError">Enter a valid 10-digit Indian mobile number, e.g. 9876543210.</div>
           </div>
           <button type="button" class="btn btn-primary-custom w-100 mt-2" id="sendPhoneOtpBtn">Send Code</button>
         </div>
