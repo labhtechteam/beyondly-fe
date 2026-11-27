@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio | Beyondly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="css/style.css?v=20261111-3" rel="stylesheet" />
+  <script src="js/common/theme.js?v=20261111"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top site-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Beyond<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="siteNav">
+        <div class="nav-search-slot d-none" id="navSearchItem">
+          <form class="nav-search" id="navSearchForm" role="search">
+            <i class="bi bi-search nav-search-icon" aria-hidden="true"></i>
+            <input type="search" class="form-control nav-search-input" id="navSearchInput" placeholder="Search stocks &amp; ETFs" aria-label="Search stocks and ETFs" autocomplete="off" />
+            <kbd class="nav-search-kbd d-none d-xl-inline" title="Press / to search">/</kbd>
+          </form>
+        </div>
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="markets.html">Markets</a></li>
+          <li class="nav-item"><a class="nav-link" href="trading.html">Trading</a></li>
+          <li class="nav-item"><a class="nav-link active" href="portfolio.html">Portfolio</a></li>
+          <li class="nav-item"><a class="nav-link" href="wallet.html">Wallet</a></li>
+          <li class="nav-item"><a class="nav-link" href="kyc.html">KYC</a></li>
+          <li class="nav-item"><a class="nav-link" href="reports.html">Reports</a></li>
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme"><i class="bi bi-sun"></i></button>
+          </li>
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-3"><a class="btn btn-primary-custom btn-sm" href="get-started.html" id="navAuthButton">Get Started</a><a href="#" class="text-muted-custom small d-none" id="navSignOutLink">Sign Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="mkt-page">
+    <div class="container">
+
+      <!-- Shown when the visitor has no access token yet -->
+      <div class="metal-card text-center d-none" id="authRequiredNotice">
+        <i class="bi bi-lock text-primary-custom" style="font-size: 2rem;"></i>
+        <h5 class="text-white mt-3 mb-2">Sign in to see your portfolio</h5>
+        <p class="text-muted-custom mb-4">Create an account or verify your mobile number first.</p>
+        <a href="get-started.html" class="btn btn-primary-custom">Get Started</a>
+      </div>
+
+      <div data-requires-auth>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+          <h1 class="pf-title mb-0">Portfolio</h1>
+          <button type="button" class="btn btn-outline-custom btn-sm" id="portfolioRefreshButton"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+        </div>
+        <div class="alert alert-danger d-none" id="portfolioErrorAlert" role="alert"></div>
+
+        <div class="mkt-panel">
+          <div class="mkt-underline-tabs mb-4" id="portfolioTabs">
+            <button type="button" class="active" data-tab="holdings">Holdings <span class="pf-count" data-tab-count="holdings">0</span></button>
+            <button type="button" data-tab="positions">Positions <span class="pf-count" data-tab-count="positions">0</span></button>
+          </div>
+
+          <!-- Totals for the selected tab -->
+          <div class="wlt-balance-strip pf-totals">
+            <div class="wlt-balance">
+              <span class="wlt-balance-icon"><i class="bi bi-wallet2"></i></span>
+              <div>
+                <div class="wlt-balance-label">Total Cost</div>
+                <div class="wlt-balance-value" id="totalCostValue">—</div>
+              </div>
+            </div>
+            <div class="wlt-balance">
+              <span class="wlt-balance-icon"><i class="bi bi-graph-up-arrow"></i></span>
+              <div>
+                <div class="wlt-balance-label">Total P&amp;L</div>
+                <div class="wlt-balance-value" id="totalPnlValue">—</div>
+              </div>
+            </div>
+          </div>
+          <p class="text-muted-custom small mt-3 mb-0" id="portfolioTabNote"></p>
+
+          <div class="table-responsive mt-3" id="portfolioTableWrap">
+            <table class="table table-custom mb-0 pf-table">
+              <thead>
+                <tr><th>Stock</th><th class="text-end">Qty</th><th class="text-end">Avg. Price</th><th class="text-end">LTP</th><th class="text-end">Cost</th><th class="text-end">P&amp;L</th><th class="text-end" id="portfolioActionHeader">Action</th></tr>
+              </thead>
+              <tbody id="portfolioTableBody"></tbody>
+            </table>
+          </div>
+          <div class="wlt-empty d-none" id="portfolioEmptyState">
+            <div class="wlt-empty-art"><span></span><i></i><i></i></div>
+            <h6 class="text-white mt-4 mb-1" id="portfolioEmptyTitle">No holdings yet</h6>
+            <p class="text-muted-custom small mb-3" id="portfolioEmptyText">Stocks you buy will show up here once they settle.</p>
+            <a href="markets.html" class="btn btn-primary-custom btn-sm">Explore Markets</a>
+          </div>
+
+          <!-- Orders, shown under the Positions tab -->
+          <div class="d-none mt-3" id="positionsOrdersSection">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+              <h5 class="text-white mb-0">Your Orders</h5>
+              <button type="button" class="btn btn-outline-custom btn-sm" id="refreshOrdersButton"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+            </div>
+            <div class="alert alert-danger d-none" id="ordersErrorAlert" role="alert"></div>
+            <div class="table-responsive">
+              <table class="table table-custom mb-0">
+                <thead>
+                  <tr><th>Symbol</th><th>Side</th><th>Category</th><th>Qty</th><th>Value</th><th>Status</th><th class="text-end">Actions</th></tr>
+                </thead>
+                <tbody id="ordersTableBody"></tbody>
+              </table>
+            </div>
+            <p class="text-muted-custom text-center py-4 mb-0 d-none" id="noOrdersMessage">No orders yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sell a holding -->
+  <div class="modal fade" id="sellOrderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content mkt-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="sellOrderTitle">Sell</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="sellOrderForm" novalidate>
+          <div class="modal-body pt-0">
+            <p class="text-muted-custom small mb-3">You hold <span class="text-white" id="sellHeldQuantity">—</span> shares. LTP <span class="text-white" id="sellLastPrice">—</span></p>
+            <div class="row g-3">
+              <div class="col-6">
+                <label class="form-label-custom" for="sellQuantity">Quantity</label>
+                <input type="number" id="sellQuantity" min="0" step="any" class="form-control form-control-custom" />
+              </div>
+              <div class="col-6">
+                <label class="form-label-custom" for="sellCategory">Order type</label>
+                <select id="sellCategory" class="form-select form-select-custom">
+                  <option value="market_price">Market</option>
+                  <option value="limit">Limit</option>
+                </select>
+              </div>
+              <div class="col-6 d-none" id="sellLimitPriceGroup">
+                <label class="form-label-custom" for="sellLimitPrice">Limit price</label>
+                <input type="number" id="sellLimitPrice" min="0" step="0.01" class="form-control form-control-custom" />
+              </div>
+              <div class="col-6">
+                <label class="form-label-custom" for="sellExchange">Exchange</label>
+                <select id="sellExchange" class="form-select form-select-custom">
+                  <option value="nasdaq">NASDAQ</option>
+                  <option value="nyse">NYSE</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label-custom" for="sellValidity">Validity</label>
+                <select id="sellValidity" class="form-select form-select-custom">
+                  <option value="DAY">Day</option>
+                  <option value="GTC">Good till cancelled</option>
+                </select>
+              </div>
+            </div>
+            <div class="alert alert-danger mt-3 mb-0 d-none" id="sellOrderError"></div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary-custom" id="sellOrderSubmitButton">Place Sell Order</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-4">
+          <a class="navbar-brand d-inline-block mb-3" href="index.html">Beyond<span class="text-primary-custom">ly</span></a>
+          <p class="text-muted-custom small mb-0">Beyondly is a brokerage platform for trading international equities, built on a modern API-first infrastructure covering onboarding, funding, execution, and reporting.</p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Product</h6>
+          <a href="markets.html">Markets</a>
+          <a href="trading.html">Trading</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="wallet.html">Wallet</a>
+          <a href="kyc.html">KYC</a>
+          <a href="reports.html">Reports</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Account</h6>
+          <a href="get-started.html">Get Started</a>
+          <a href="get-started.html">Sign In</a>
+          <a href="kyc.html">Verify Identity</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Company</h6>
+          <a href="#">About</a>
+          <a href="#">Support</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Legal</h6>
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Risk Disclosure</a>
+        </div>
+      </div>
+      <div class="footer-disclaimer">
+        <p class="mb-1">&copy; 2026 Beyondly. All rights reserved.</p>
+        <p class="mb-0">International investing involves currency, market, and settlement risk. Trades are executed through regulated partner brokers; Beyondly does not guarantee returns.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common/api-client.js"></script>
+  <script src="js/common/auth-guard.js"></script>
+  <script src="js/common/symbol-autocomplete.js"></script>
+  <script src="js/common/navbar.js"></script>
+  <script src="js/common/market-shared.js?v=20261111"></script>
+  <script src="js/pages/portfolio.js?v=20261110-2"></script>
+</body>
+</html>

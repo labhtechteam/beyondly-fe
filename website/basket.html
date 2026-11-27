@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basket Orders | Beyondly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+  <script src="js/common/theme.js?v=20261111"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top site-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Beyond<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="siteNav">
+        <div class="nav-search-slot d-none" id="navSearchItem">
+          <form class="nav-search" id="navSearchForm" role="search">
+            <i class="bi bi-search nav-search-icon" aria-hidden="true"></i>
+            <input type="search" class="form-control nav-search-input" id="navSearchInput" placeholder="Search stocks &amp; ETFs" aria-label="Search stocks and ETFs" autocomplete="off" />
+            <kbd class="nav-search-kbd d-none d-xl-inline" title="Press / to search">/</kbd>
+          </form>
+        </div>
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="markets.html">Markets</a></li>
+          <li class="nav-item"><a class="nav-link active" href="trading.html">Trading</a></li>
+          <li class="nav-item"><a class="nav-link" href="portfolio.html">Portfolio</a></li>
+          <li class="nav-item"><a class="nav-link" href="wallet.html">Wallet</a></li>
+          <li class="nav-item"><a class="nav-link" href="kyc.html">KYC</a></li>
+          <li class="nav-item"><a class="nav-link" href="reports.html">Reports</a></li>
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme"><i class="bi bi-sun"></i></button>
+          </li>
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-3"><a class="btn btn-primary-custom btn-sm" href="get-started.html" id="navAuthButton">Get Started</a><a href="#" class="text-muted-custom small d-none" id="navSignOutLink">Sign Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero hero-sm">
+    <div class="container">
+      <p class="eyebrow mb-3"><a href="trading.html" class="text-muted-custom">Trading</a> / Basket</p>
+      <h1 class="display-5 mb-3">Place a basket of orders at once</h1>
+      <p class="fs-5 text-muted-custom mb-0" style="max-width: 640px;">
+        Add up to 20 buy or sell orders, review them, and send them together. Every order is checked before any is placed.
+        Orders that fail stay in the basket so you can retry them.
+      </p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+
+      <!-- Shown when the visitor has no access token yet -->
+      <div class="metal-card text-center d-none" id="authRequiredNotice">
+        <i class="bi bi-lock text-primary-custom" style="font-size: 2rem;"></i>
+        <h5 class="text-white mt-3 mb-2">Sign in to trade</h5>
+        <p class="text-muted-custom mb-4">Create an account or verify your mobile number first.</p>
+        <a href="get-started.html" class="btn btn-primary-custom">Get Started</a>
+      </div>
+
+      <div data-requires-auth>
+        <!-- Basket builder -->
+        <div class="metal-card metal-card--flat basket-card mb-4">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+              <h5 class="text-white mb-1">Your Basket</h5>
+              <p class="text-muted-custom small mb-0" id="basketSummary">0 orders</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-label-custom mb-0" for="basketCountryId">Country ID</label>
+              <input type="number" id="basketCountryId" min="1" value="1" class="form-control form-control-custom basket-country-input" />
+            </div>
+          </div>
+
+          <div class="alert alert-danger d-none" id="basketErrorAlert" role="alert"></div>
+
+          <div class="basket-header d-none d-lg-grid">
+            <span>Side</span><span>Symbol</span><span>Exchange</span><span>Type</span>
+            <span>Qty / Amount</span><span>Limit</span><span>Stop</span><span></span>
+          </div>
+          <div id="basketLegList"></div>
+
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4">
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-outline-custom" id="addLegBtn"><i class="bi bi-plus-lg"></i> Add Order</button>
+              <button type="button" class="btn btn-link text-muted-custom" id="clearBasketBtn">Clear</button>
+            </div>
+            <button type="button" class="btn btn-primary-custom px-4" id="reviewBasketBtn">Review Basket</button>
+          </div>
+        </div>
+
+        <!-- Results of the last submission -->
+        <div class="metal-card metal-card--flat basket-card d-none" id="basketResultsCard">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h5 class="text-white mb-0">Last Submission</h5>
+            <span class="text-muted-custom small" id="basketResultsSummary"></span>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-custom mb-0">
+              <thead>
+                <tr><th>Symbol</th><th>Side</th><th>Type</th><th>Qty</th><th>Status</th><th>Broker Ref / Reason</th></tr>
+              </thead>
+              <tbody id="basketResultsBody"></tbody>
+            </table>
+          </div>
+          <a href="portfolio.html?tab=positions" class="d-inline-block mt-3 small">View all orders in Portfolio →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- One basket leg (cloned per row) -->
+  <template id="basketLegTemplate">
+    <div class="basket-leg">
+      <select class="form-select form-select-custom" data-field="order_type" aria-label="Side">
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+      </select>
+      <div>
+        <input type="text" class="form-control form-control-custom" data-field="symbol" placeholder="Symbol, e.g. AAPL" aria-label="Symbol" />
+        <div class="field-error" data-error="symbol">Enter a symbol.</div>
+      </div>
+      <select class="form-select form-select-custom" data-field="exchange_name" aria-label="Exchange">
+        <option value="nasdaq">NASDAQ</option>
+        <option value="nyse">NYSE</option>
+        <option value="bse">BSE</option>
+        <option value="nse">NSE</option>
+      </select>
+      <select class="form-select form-select-custom" data-field="order_category" aria-label="Order type">
+        <option value="market_price">Market</option>
+        <option value="limit">Limit</option>
+        <option value="stop">Stop</option>
+        <option value="stop_limit">Stop Limit</option>
+        <option value="fractional">Fractional ($)</option>
+      </select>
+      <div>
+        <input type="number" min="0" step="any" class="form-control form-control-custom" data-field="quantity" placeholder="Qty" aria-label="Quantity" />
+        <div class="field-error" data-error="quantity">Must be above zero.</div>
+      </div>
+      <div>
+        <input type="number" min="0" step="0.01" class="form-control form-control-custom" data-field="limit_price" placeholder="Limit" aria-label="Limit price" disabled />
+        <div class="field-error" data-error="limit_price">Enter a limit price.</div>
+      </div>
+      <div>
+        <input type="number" min="0" step="0.01" class="form-control form-control-custom" data-field="stop_price" placeholder="Stop" aria-label="Stop price" disabled />
+        <div class="field-error" data-error="stop_price">Enter a stop price.</div>
+      </div>
+      <button type="button" class="btn basket-remove-btn" data-action="remove" aria-label="Remove order"><i class="bi bi-x-lg"></i></button>
+    </div>
+  </template>
+
+  <!-- Confirmation before sending -->
+  <div class="modal fade" id="basketConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content mkt-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">Confirm Basket</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <p class="text-muted-custom small" id="basketConfirmSummary"></p>
+          <div class="table-responsive">
+            <table class="table table-custom mb-0">
+              <thead><tr><th>Side</th><th>Symbol</th><th>Exchange</th><th>Type</th><th>Qty</th><th>Limit</th><th>Stop</th></tr></thead>
+              <tbody id="basketConfirmBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Back</button>
+          <button type="button" class="btn btn-primary-custom" id="placeBasketBtn">Place Orders</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-4">
+          <a class="navbar-brand d-inline-block mb-3" href="index.html">Beyond<span class="text-primary-custom">ly</span></a>
+          <p class="text-muted-custom small mb-0">Beyondly is a brokerage platform for trading international equities, built on a modern API-first infrastructure covering onboarding, funding, execution, and reporting.</p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Product</h6>
+          <a href="markets.html">Markets</a>
+          <a href="trading.html">Trading</a>
+          <a href="basket.html">Basket Orders</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="wallet.html">Wallet</a>
+          <a href="kyc.html">KYC</a>
+          <a href="reports.html">Reports</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Account</h6>
+          <a href="get-started.html">Get Started</a>
+          <a href="get-started.html">Sign In</a>
+          <a href="kyc.html">Verify Identity</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Company</h6>
+          <a href="#">About</a>
+          <a href="#">Support</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Legal</h6>
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Risk Disclosure</a>
+        </div>
+      </div>
+      <div class="footer-disclaimer">
+        <p class="mb-1">&copy; 2026 Beyondly. All rights reserved.</p>
+        <p class="mb-0">International investing involves currency, market, and settlement risk. Trades are executed through regulated partner brokers; Beyondly does not guarantee returns.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common/api-client.js"></script>
+  <script src="js/common/auth-guard.js"></script>
+  <script src="js/common/navbar.js"></script>
+  <script src="js/common/symbol-autocomplete.js"></script>
+  <script src="js/pages/basket.js"></script>
+</body>
+</html>

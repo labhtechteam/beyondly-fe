@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Started | Beyondly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+  <script src="js/common/theme.js?v=20261111"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top site-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Beyond<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="siteNav">
+        <div class="nav-search-slot d-none" id="navSearchItem">
+          <form class="nav-search" id="navSearchForm" role="search">
+            <i class="bi bi-search nav-search-icon" aria-hidden="true"></i>
+            <input type="search" class="form-control nav-search-input" id="navSearchInput" placeholder="Search stocks &amp; ETFs" aria-label="Search stocks and ETFs" autocomplete="off" />
+            <kbd class="nav-search-kbd d-none d-xl-inline" title="Press / to search">/</kbd>
+          </form>
+        </div>
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="markets.html">Markets</a></li>
+          <li class="nav-item"><a class="nav-link" href="trading.html">Trading</a></li>
+          <li class="nav-item"><a class="nav-link" href="portfolio.html">Portfolio</a></li>
+          <li class="nav-item"><a class="nav-link" href="wallet.html">Wallet</a></li>
+          <li class="nav-item"><a class="nav-link" href="kyc.html">KYC</a></li>
+          <li class="nav-item"><a class="nav-link" href="reports.html">Reports</a></li>
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme"><i class="bi bi-sun"></i></button>
+          </li>
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-3"><a class="btn btn-primary-custom btn-sm" href="get-started.html" id="navAuthButton">Get Started</a><a href="#" class="text-muted-custom small d-none" id="navSignOutLink">Sign Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero hero-sm">
+    <div class="container">
+      <p class="eyebrow mb-3">Get Started</p>
+      <h1 class="display-5 mb-3">Create your Beyondly account</h1>
+      <p class="fs-5 text-muted-custom mb-0" style="max-width: 620px;">
+        Register, verify your mobile and email, and you're ready to complete KYC and start trading.
+      </p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <div class="metal-card">
+        <div class="stepper" id="signupStepper">
+          <div class="stepper-step is-active" data-step="1">
+            <div class="stepper-circle">1</div>
+            <span class="d-none d-sm-inline">Mobile</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step" data-step="2">
+            <div class="stepper-circle">2</div>
+            <span class="d-none d-sm-inline">Email</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step" data-step="3">
+            <div class="stepper-circle">3</div>
+            <span class="d-none d-sm-inline">Profile</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step" data-step="4">
+            <div class="stepper-circle"><i class="bi bi-check-lg"></i></div>
+            <span class="d-none d-sm-inline">Done</span>
+          </div>
+        </div>
+
+        <div class="alert alert-danger d-none" id="signupErrorAlert" role="alert"></div>
+
+        <!-- Step 1a: Enter mobile number -->
+        <div id="phoneEntryPanel">
+          <p class="text-muted-custom mb-3">Enter your mobile number to receive a one-time verification code.</p>
+          <div class="mb-3">
+            <label class="form-label-custom" for="signupPhone">Mobile Number</label>
+            <input type="tel" id="signupPhone" class="form-control form-control-custom" placeholder="+919876543210" />
+            <div class="field-error" id="signupPhoneError">Enter a valid Indian mobile number, e.g. +919876543210.</div>
+          </div>
+          <button type="button" class="btn btn-primary-custom w-100 mt-2" id="sendPhoneOtpBtn">Send Code</button>
+        </div>
+
+        <!-- Step 1b: Verify mobile OTP -->
+        <div id="phoneOtpPanel" class="d-none">
+          <p class="text-muted-custom mb-3">Enter the code sent to <span id="maskedPhoneDisplay" class="text-white fw-semibold"></span></p>
+          <div class="mb-3">
+            <input type="text" id="phoneOtpInput" maxlength="8" class="form-control form-control-custom" placeholder="Enter code" />
+            <div class="field-error" id="phoneOtpError">Enter the code you received.</div>
+          </div>
+          <button type="button" class="btn btn-primary-custom w-100 mb-2" id="verifyPhoneOtpBtn">Verify Mobile</button>
+          <button type="button" class="btn btn-outline-custom w-100" id="resendPhoneOtpBtn">Resend Code</button>
+        </div>
+
+        <!-- Step 2a: Enter email -->
+        <div id="emailEntryPanel" class="d-none">
+          <p class="text-muted-custom mb-3">Your mobile is verified. Now add your email address.</p>
+          <div class="mb-3">
+            <label class="form-label-custom" for="signupEmail">Email</label>
+            <input type="email" id="signupEmail" class="form-control form-control-custom" placeholder="jane@example.com" />
+            <div class="field-error" id="signupEmailError">Enter a valid email address.</div>
+          </div>
+          <button type="button" class="btn btn-primary-custom w-100 mt-2" id="sendEmailOtpBtn">Send Code</button>
+        </div>
+
+        <!-- Step 2b: Verify email OTP -->
+        <div id="emailOtpPanel" class="d-none">
+          <p class="text-muted-custom mb-3">Enter the code sent to <span id="maskedEmailDisplay" class="text-white fw-semibold"></span></p>
+          <div class="mb-3">
+            <input type="text" id="emailOtpInput" maxlength="8" class="form-control form-control-custom" placeholder="Enter code" />
+            <div class="field-error" id="emailOtpError">Enter the code you received.</div>
+          </div>
+          <button type="button" class="btn btn-primary-custom w-100 mb-2" id="verifyEmailOtpBtn">Verify Email</button>
+          <button type="button" class="btn btn-outline-custom w-100" id="resendEmailOtpBtn">Resend Code</button>
+        </div>
+
+        <!-- Step 3: Profile + broker registration -->
+        <div id="profilePanel" class="d-none">
+          <p class="text-muted-custom mb-3">Your email is verified. Add your PAN to finish registration.</p>
+          <form id="profileForm" novalidate>
+            <div class="mb-3">
+              <label class="form-label-custom" for="profilePan">PAN Number</label>
+              <input type="text" id="profilePan" maxlength="10" class="form-control form-control-custom" placeholder="ABCDE1234F" />
+              <div class="field-error" id="profilePanError">Enter a valid PAN, e.g. ABCDE1234F.</div>
+              <p class="text-muted-custom small mt-1 mb-0">We verify this against your legal name before your account is created.</p>
+            </div>
+            <button type="submit" class="btn btn-primary-custom w-100 mt-2">Create Account</button>
+          </form>
+        </div>
+
+        <!-- Step 4: Done -->
+        <div id="signupDonePanel" class="d-none text-center py-3">
+          <i class="bi bi-check-circle text-primary-custom" style="font-size: 2.2rem;"></i>
+          <h5 class="text-white mt-3 mb-2">Your account is ready</h5>
+          <p class="text-muted-custom mb-4">Next, complete KYC verification so you can fund your account and start trading.</p>
+          <a href="kyc.html" class="btn btn-primary-custom w-100">Continue to KYC Verification</a>
+        </div>
+
+        <!-- Shown if OTP verification returns a PIN token (returning, KYC-verified user) -->
+        <div id="pinNotSupportedPanel" class="d-none text-center py-3">
+          <i class="bi bi-shield-lock text-primary-custom" style="font-size: 2.2rem;"></i>
+          <h5 class="text-white mt-3 mb-2">Welcome back</h5>
+          <p class="text-muted-custom mb-0">This account already has a PIN set up. PIN sign-in isn't available on this site yet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-4">
+          <a class="navbar-brand d-inline-block mb-3" href="index.html">Beyond<span class="text-primary-custom">ly</span></a>
+          <p class="text-muted-custom small mb-0">Beyondly is a brokerage platform for trading international equities, built on a modern API-first infrastructure covering onboarding, funding, execution, and reporting.</p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Product</h6>
+          <a href="markets.html">Markets</a>
+          <a href="trading.html">Trading</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="wallet.html">Wallet</a>
+          <a href="kyc.html">KYC</a>
+          <a href="reports.html">Reports</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Account</h6>
+          <a href="get-started.html">Get Started</a>
+          <a href="get-started.html">Sign In</a>
+          <a href="kyc.html">Verify Identity</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Company</h6>
+          <a href="#">About</a>
+          <a href="#">Support</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Legal</h6>
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Risk Disclosure</a>
+        </div>
+      </div>
+      <div class="footer-disclaimer">
+        <p class="mb-1">&copy; 2026 Beyondly. All rights reserved.</p>
+        <p class="mb-0">International investing involves currency, market, and settlement risk. Trades are executed through regulated partner brokers; Beyondly does not guarantee returns.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common/api-client.js"></script>
+  <script src="js/common/auth-guard.js"></script>
+  <script src="js/common/symbol-autocomplete.js"></script>
+  <script src="js/common/navbar.js"></script>
+  <script src="js/pages/get-started.js"></script>
+</body>
+</html>

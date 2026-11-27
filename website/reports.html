@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports | Beyondly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+  <script src="js/common/theme.js?v=20261111"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top site-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Beyond<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="siteNav">
+        <div class="nav-search-slot d-none" id="navSearchItem">
+          <form class="nav-search" id="navSearchForm" role="search">
+            <i class="bi bi-search nav-search-icon" aria-hidden="true"></i>
+            <input type="search" class="form-control nav-search-input" id="navSearchInput" placeholder="Search stocks &amp; ETFs" aria-label="Search stocks and ETFs" autocomplete="off" />
+            <kbd class="nav-search-kbd d-none d-xl-inline" title="Press / to search">/</kbd>
+          </form>
+        </div>
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="markets.html">Markets</a></li>
+          <li class="nav-item"><a class="nav-link" href="trading.html">Trading</a></li>
+          <li class="nav-item"><a class="nav-link" href="portfolio.html">Portfolio</a></li>
+          <li class="nav-item"><a class="nav-link" href="wallet.html">Wallet</a></li>
+          <li class="nav-item"><a class="nav-link" href="kyc.html">KYC</a></li>
+          <li class="nav-item"><a class="nav-link active" href="reports.html">Reports</a></li>
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme"><i class="bi bi-sun"></i></button>
+          </li>
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-3"><a class="btn btn-primary-custom btn-sm" href="get-started.html" id="navAuthButton">Get Started</a><a href="#" class="text-muted-custom small d-none" id="navSignOutLink">Sign Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero hero-sm">
+    <div class="container">
+      <p class="eyebrow mb-3">Reports</p>
+      <h1 class="display-5 mb-3">Reports built for clarity</h1>
+      <p class="fs-5 text-muted-custom mb-0" style="max-width: 620px;">
+        Track realized profit and loss, and generate tax reports whenever you need them.
+      </p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+
+      <!-- Shown when the visitor has no access token yet -->
+      <div class="metal-card text-center d-none" id="authRequiredNotice">
+        <i class="bi bi-lock text-primary-custom" style="font-size: 2rem;"></i>
+        <h5 class="text-white mt-3 mb-2">Sign in to view reports</h5>
+        <p class="text-muted-custom mb-4">Create an account or verify your mobile number first.</p>
+        <a href="get-started.html" class="btn btn-primary-custom">Get Started</a>
+      </div>
+
+      <div class="row g-4" data-requires-auth>
+        <!-- Report tabs, stacked vertically on desktop -->
+        <div class="col-lg-3">
+          <nav class="report-nav" id="reportTabs" role="tablist" aria-orientation="vertical">
+            <button type="button" class="report-nav-item active" role="tab" data-report="PNL">
+              <i class="bi bi-graph-up-arrow"></i>
+              <span><span class="report-nav-title">P&amp;L Report</span><span class="report-nav-sub">Realized profit and loss</span></span>
+            </button>
+            <button type="button" class="report-nav-item" role="tab" data-report="TAX">
+              <i class="bi bi-receipt"></i>
+              <span><span class="report-nav-title">Tax Report</span><span class="report-nav-sub">Statement for tax filing</span></span>
+            </button>
+            <button type="button" class="report-nav-item" role="tab" data-report="ORDERS">
+              <i class="bi bi-clock-history"></i>
+              <span><span class="report-nav-title">Order History</span><span class="report-nav-sub">Every order you&rsquo;ve placed</span></span>
+            </button>
+          </nav>
+        </div>
+
+        <div class="col-lg-9">
+          <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+            <div>
+              <h4 class="text-white mb-1" id="reportTitle">P&amp;L Report</h4>
+              <p class="text-muted-custom small mb-0" id="reportDescription"></p>
+            </div>
+            <form id="reportDateRangeForm" class="d-flex align-items-end gap-2 flex-wrap">
+              <div>
+                <label class="form-label-custom" for="reportFromDate">From</label>
+                <input type="date" id="reportFromDate" class="form-control form-control-custom" />
+              </div>
+              <div>
+                <label class="form-label-custom" for="reportToDate">To</label>
+                <input type="date" id="reportToDate" class="form-control form-control-custom" />
+              </div>
+              <button type="submit" class="btn btn-primary-custom" id="runReportBtn">Run Report</button>
+            </form>
+          </div>
+
+          <div class="alert alert-danger d-none" id="reportErrorAlert" role="alert"></div>
+
+          <!-- P&L report -->
+          <div class="d-none" id="pnlReportPanel">
+            <p class="text-muted-custom text-center py-5 mb-0" id="pnlReportMessage">Choose a date range and run a report.</p>
+
+            <div class="d-none" id="pnlReportContent">
+              <!-- Headline totals -->
+              <div class="wlt-balance-strip pnl-summary report-section">
+                <div class="wlt-balance">
+                  <span class="wlt-balance-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                  <div>
+                    <div class="wlt-balance-label">Realized P&amp;L</div>
+                    <div class="wlt-balance-value" id="pnlTotalValue">—</div>
+                  </div>
+                </div>
+                <div class="wlt-balance">
+                  <span class="wlt-balance-icon"><i class="bi bi-receipt-cutoff"></i></span>
+                  <div>
+                    <div class="wlt-balance-label">Fees &amp; Charges</div>
+                    <div class="wlt-balance-value" id="pnlFeesValue">—</div>
+                  </div>
+                </div>
+                <div class="wlt-balance">
+                  <span class="wlt-balance-icon"><i class="bi bi-cash-stack"></i></span>
+                  <div>
+                    <div class="wlt-balance-label">Net after Fees</div>
+                    <div class="wlt-balance-value" id="pnlNetValue">—</div>
+                  </div>
+                </div>
+                <div class="wlt-balance">
+                  <span class="wlt-balance-icon"><i class="bi bi-arrow-left-right"></i></span>
+                  <div>
+                    <div class="wlt-balance-label">Closed Trades</div>
+                    <div class="wlt-balance-value" id="pnlTradeCountValue">—</div>
+                    <span class="pf-sub" id="pnlWinLossValue"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row gy-5 gx-xl-5 report-section">
+                <!-- P&L by symbol -->
+                <div class="col-xl-8">
+                  <h6 class="text-white report-section-header">By Symbol</h6>
+                  <div class="metal-card metal-card--flat p-0 overflow-hidden order-history-card">
+                    <div class="table-responsive">
+                      <table class="table table-custom mb-0">
+                        <thead>
+                          <tr><th>Symbol</th><th class="text-end">Trades</th><th class="text-end">P&amp;L</th><th class="text-end">Fees</th><th class="text-end">Net</th></tr>
+                        </thead>
+                        <tbody id="pnlSymbolBody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Fee breakdown -->
+                <div class="col-xl-4">
+                  <h6 class="text-white report-section-header">Fee Breakdown</h6>
+                  <div class="metal-card metal-card--flat order-history-card">
+                    <ul class="pnl-fee-list" id="pnlFeeList"></ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Individual closed trades -->
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 report-section-header">
+                <h6 class="text-white mb-0">Closed Trades</h6>
+                <input type="search" id="pnlSymbolFilter" class="form-control form-control-custom order-history-search" placeholder="Filter by symbol" aria-label="Filter trades by symbol" />
+              </div>
+              <div class="metal-card metal-card--flat p-0 overflow-hidden order-history-card">
+                <div class="table-responsive">
+                  <table class="table table-custom mb-0">
+                    <thead>
+                      <tr><th>Symbol</th><th>Bought</th><th>Sold</th><th class="text-end">Qty</th><th class="text-end">Buy Value</th><th class="text-end">Sell Value</th><th class="text-end">P&amp;L</th><th class="text-end">Fees</th></tr>
+                    </thead>
+                    <tbody id="pnlTradesBody"></tbody>
+                  </table>
+                </div>
+                <p class="text-muted-custom text-center py-4 mb-0 d-none" id="pnlTradesEmpty">No trades match this symbol.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tax report -->
+          <div class="d-none" id="taxReportPanel">
+            <p class="text-muted-custom text-center py-5 mb-0" id="taxReportMessage">Choose a date range and run a report.</p>
+
+            <div class="d-none" id="taxReportContent">
+              <!-- Headline capital gains, INR first with USD underneath -->
+              <div class="wlt-balance-strip pnl-summary report-section">
+                <div class="wlt-balance">
+                  <span class="wlt-balance-icon"><i class="bi bi-hourglass-split"></i></span>
+                  <div>
+                    <div class="wlt-balance-label">Short-term Gains (STCG)</div>
+                    <div class="wlt-balance-value" id="taxStcgValue">—</div>
+                    <span class="pf-sub" id="taxStcgUsdValue"></span>
+                  </div>
+                </div>
+                <div class="wlt-balance">
+                  <span class="wlt-balance-icon"><i class="bi bi-calendar-check"></i></span>
+                  <div>
+                    <div class="wlt-balance-label">Long-term Gains (LTCG)</div>
+                    <div class="wlt-balance-value" id="taxLtcgValue">—</div>
+                    <span class="pf-sub" id="taxLtcgUsdValue"></span>
+                  </div>
+                </div>
+                <div class="wlt-balance">
+                  <span class="wlt-balance-icon"><i class="bi bi-calculator"></i></span>
+                  <div>
+                    <div class="wlt-balance-label">Total Capital Gains</div>
+                    <div class="wlt-balance-value" id="taxTotalValue">—</div>
+                    <span class="pf-sub" id="taxTotalUsdValue"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row gy-5 gx-xl-5 report-section">
+                <!-- Gains per security -->
+                <div class="col-xl-7">
+                  <h6 class="text-white report-section-header">By Security</h6>
+                  <div class="metal-card metal-card--flat p-0 overflow-hidden order-history-card">
+                    <div class="table-responsive">
+                      <table class="table table-custom mb-0">
+                        <thead>
+                          <tr><th>Symbol</th><th class="text-end">STCG</th><th class="text-end">LTCG</th><th class="text-end">Total</th></tr>
+                        </thead>
+                        <tbody id="taxSecurityBody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Advance-tax quarterly breakup -->
+                <div class="col-xl-5">
+                  <h6 class="text-white report-section-header">Quarterly Breakup <span class="text-muted-custom small fw-normal">(for advance tax)</span></h6>
+                  <div class="metal-card metal-card--flat p-0 overflow-hidden order-history-card">
+                    <div class="table-responsive">
+                      <table class="table table-custom mb-0">
+                        <thead>
+                          <tr><th>Period</th><th class="text-end">STCG</th><th class="text-end">LTCG</th></tr>
+                        </thead>
+                        <tbody id="taxQuarterBody"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Trades, split by holding period -->
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 report-section-header">
+                <div class="segmented-tabs" id="taxTermTabs" role="tablist">
+                  <button type="button" class="seg-btn active" data-term="stcg">Short-term <span class="pf-count" id="taxStcgCount">0</span></button>
+                  <button type="button" class="seg-btn" data-term="ltcg">Long-term <span class="pf-count" id="taxLtcgCount">0</span></button>
+                </div>
+                <input type="search" id="taxSymbolFilter" class="form-control form-control-custom order-history-search" placeholder="Filter by symbol" aria-label="Filter trades by symbol" />
+              </div>
+              <div class="metal-card metal-card--flat p-0 overflow-hidden order-history-card">
+                <div class="table-responsive">
+                  <table class="table table-custom mb-0">
+                    <thead>
+                      <tr><th>Symbol</th><th>Bought</th><th>Sold</th><th class="text-end">Held</th><th class="text-end">Qty</th><th class="text-end">Buy Value</th><th class="text-end">Sell Value</th><th class="text-end">Gain / Loss</th></tr>
+                    </thead>
+                    <tbody id="taxTradesBody"></tbody>
+                  </table>
+                </div>
+                <p class="text-muted-custom text-center py-4 mb-0 d-none" id="taxTradesEmpty"></p>
+              </div>
+              <p class="text-muted-custom small mt-3 mb-0">INR values use the broker&rsquo;s exchange rate on each buy and sell date. Hover over a date to see the rate. Check with a tax advisor before filing.</p>
+            </div>
+          </div>
+
+          <!-- Order history -->
+          <div class="d-none" id="orderHistoryPanel">
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <input type="search" id="orderHistorySymbolFilter" class="form-control form-control-custom order-history-search" placeholder="Filter by symbol" aria-label="Filter by symbol" />
+              <select id="orderHistorySideFilter" class="form-select form-select-custom order-history-select" aria-label="Filter by side">
+                <option value="">All sides</option>
+                <option value="buy">Buy</option>
+                <option value="sell">Sell</option>
+              </select>
+              <select id="orderHistoryStatusFilter" class="form-select form-select-custom order-history-select" aria-label="Filter by status">
+                <option value="">All statuses</option>
+                <option value="success">Placed</option>
+                <option value="pending">Pending</option>
+                <option value="modified">Modified</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="failure">Failed</option>
+              </select>
+              <span class="text-muted-custom small align-self-center ms-auto" id="orderHistorySummary"></span>
+            </div>
+            <div class="metal-card metal-card--flat p-0 overflow-hidden order-history-card">
+              <div class="table-responsive">
+                <table class="table table-custom mb-0">
+                  <thead>
+                    <tr><th>Date</th><th>Symbol</th><th>Side</th><th>Type</th><th class="text-end">Qty</th><th class="text-end">Limit</th><th>Status</th><th>Broker Ref / Reason</th></tr>
+                  </thead>
+                  <tbody id="orderHistoryBody"></tbody>
+                </table>
+              </div>
+              <p class="text-muted-custom text-center py-5 mb-0 d-none" id="orderHistoryEmpty"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-4">
+          <a class="navbar-brand d-inline-block mb-3" href="index.html">Beyond<span class="text-primary-custom">ly</span></a>
+          <p class="text-muted-custom small mb-0">Beyondly is a brokerage platform for trading international equities, built on a modern API-first infrastructure covering onboarding, funding, execution, and reporting.</p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Product</h6>
+          <a href="markets.html">Markets</a>
+          <a href="trading.html">Trading</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="wallet.html">Wallet</a>
+          <a href="kyc.html">KYC</a>
+          <a href="reports.html">Reports</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Account</h6>
+          <a href="get-started.html">Get Started</a>
+          <a href="get-started.html">Sign In</a>
+          <a href="kyc.html">Verify Identity</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Company</h6>
+          <a href="#">About</a>
+          <a href="#">Support</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Legal</h6>
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Risk Disclosure</a>
+        </div>
+      </div>
+      <div class="footer-disclaimer">
+        <p class="mb-1">&copy; 2026 Beyondly. All rights reserved.</p>
+        <p class="mb-0">International investing involves currency, market, and settlement risk. Trades are executed through regulated partner brokers; Beyondly does not guarantee returns.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common/api-client.js"></script>
+  <script src="js/common/auth-guard.js"></script>
+  <script src="js/common/symbol-autocomplete.js"></script>
+  <script src="js/common/navbar.js"></script>
+  <script src="js/pages/reports.js"></script>
+</body>
+</html>

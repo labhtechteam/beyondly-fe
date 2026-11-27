@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock | Beyondly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="css/style.css?v=20261111-3" rel="stylesheet" />
+  <script src="js/common/theme.js?v=20261111"></script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top site-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Beyond<span>ly</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="siteNav">
+        <div class="nav-search-slot d-none" id="navSearchItem">
+          <form class="nav-search" id="navSearchForm" role="search">
+            <i class="bi bi-search nav-search-icon" aria-hidden="true"></i>
+            <input type="search" class="form-control nav-search-input" id="navSearchInput" placeholder="Search stocks &amp; ETFs" aria-label="Search stocks and ETFs" autocomplete="off" />
+            <kbd class="nav-search-kbd d-none d-xl-inline" title="Press / to search">/</kbd>
+          </form>
+        </div>
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="markets.html">Markets</a></li>
+          <li class="nav-item"><a class="nav-link" href="trading.html">Trading</a></li>
+          <li class="nav-item"><a class="nav-link" href="portfolio.html">Portfolio</a></li>
+          <li class="nav-item"><a class="nav-link" href="wallet.html">Wallet</a></li>
+          <li class="nav-item"><a class="nav-link" href="kyc.html">KYC</a></li>
+          <li class="nav-item"><a class="nav-link" href="reports.html">Reports</a></li>
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme"><i class="bi bi-sun"></i></button>
+          </li>
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0 d-flex align-items-center gap-3"><a class="btn btn-primary-custom btn-sm" href="get-started.html" id="navAuthButton">Get Started</a><a href="#" class="text-muted-custom small d-none" id="navSignOutLink">Sign Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ETF ticker strip -->
+  <div class="mkt-ticker" data-requires-auth>
+    <span class="mkt-ticker-label">ETF Tracking Indices</span>
+    <div class="mkt-ticker-viewport">
+      <div class="mkt-ticker-track" id="etfTickerTrack"></div>
+    </div>
+  </div>
+
+  <section class="mkt-page">
+    <div class="container">
+
+      <!-- Shown when the visitor has no access token yet -->
+      <div class="metal-card text-center d-none" id="authRequiredNotice">
+        <i class="bi bi-lock text-primary-custom" style="font-size: 2rem;"></i>
+        <h5 class="text-white mt-3 mb-2">Sign in to view stock details</h5>
+        <p class="text-muted-custom mb-4">Create an account or verify your mobile number first.</p>
+        <a href="get-started.html" class="btn btn-primary-custom">Get Started</a>
+      </div>
+
+      <div data-requires-auth>
+        <a href="markets.html" class="stk-back mb-3"><i class="bi bi-arrow-left"></i> Back to Markets</a>
+        <div class="alert alert-danger d-none" id="stockErrorAlert" role="alert"></div>
+
+        <div class="stk-layout" id="stockContent">
+          <!-- Price header + key stats -->
+          <div class="stk-layout-summary">
+            <div class="stk-summary">
+              <div class="stk-summary-head">
+                <div class="d-flex align-items-center gap-3">
+                  <span id="stockAvatarSlot"></span>
+                  <div class="min-w-0">
+                    <h5 class="mb-0 text-white stk-company" id="stockCompanyName">—</h5>
+                    <span class="stk-symbol-label" id="stockSymbolLabel"></span>
+                  </div>
+                  <button class="stk-bookmark ms-auto" id="watchlistToggle" aria-label="Toggle watchlist"><i class="bi bi-bookmark"></i></button>
+                </div>
+                <div class="stk-price mt-3" id="stockPrice">—</div>
+                <div id="stockChange"></div>
+              </div>
+              <div class="stk-stat-grid" id="stockStatGrid"></div>
+              <div class="stk-period-returns">
+                <div class="stk-period-return" id="weekReturn"></div>
+                <div class="stk-period-return" id="monthReturn"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main column -->
+          <div class="stk-layout-main d-flex flex-column gap-4">
+            <!-- Price chart -->
+            <div class="mkt-panel">
+              <div class="mkt-chip-group mb-3" id="chartRangeTabs">
+                <button class="mkt-chip active" data-range="1d">1D</button>
+                <button class="mkt-chip" data-range="5d">1W</button>
+                <button class="mkt-chip" data-range="1m">1M</button>
+                <button class="mkt-chip" data-range="3m">3M</button>
+                <button class="mkt-chip" data-range="1y">1Y</button>
+                <button class="mkt-chip" data-range="5y">5Y</button>
+              </div>
+              <div class="stk-chart-wrap">
+                <canvas id="priceChart"></canvas>
+                <p class="stk-chart-message d-none" id="priceChartMessage"></p>
+              </div>
+            </div>
+
+            <!-- Performance range -->
+            <div class="mkt-panel">
+              <div class="mkt-panel-head">
+                <h5 class="mkt-panel-title"><i class="bi bi-activity"></i> Performance</h5>
+                <div class="mkt-chip-group" id="performanceTabs">
+                  <button class="mkt-chip active" data-period="day">1D</button>
+                  <button class="mkt-chip" data-period="month">1M</button>
+                  <button class="mkt-chip" data-period="year">52W</button>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <div><div class="small text-muted-custom" id="rangeLowLabel">Today's Low</div><div class="stk-range-value" id="rangeLowValue">—</div></div>
+                <div class="text-end"><div class="small text-muted-custom" id="rangeHighLabel">Today's High</div><div class="stk-range-value" id="rangeHighValue">—</div></div>
+              </div>
+              <div class="stk-range-bar mt-2"><i class="bi bi-caret-up-fill stk-range-marker" id="rangeMarker"></i></div>
+            </div>
+
+            <!-- Detail tabs -->
+            <div class="mkt-underline-tabs" id="stockTabs">
+              <button class="active" data-pane="overview">Overview</button>
+              <button data-pane="financials">Financials</button>
+              <button data-pane="technicals">Technicals</button>
+            </div>
+
+            <div class="stk-pane" id="pane-overview">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mkt-panel h-100">
+                    <div class="mkt-panel-head">
+                      <h5 class="mkt-panel-title"><i class="bi bi-building"></i> Company Overview</h5>
+                    </div>
+                    <div id="companyFacts"></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mkt-panel h-100">
+                    <div class="mkt-panel-head">
+                      <h5 class="mkt-panel-title"><i class="bi bi-info-circle"></i> About</h5>
+                    </div>
+                    <p class="fw-semibold mb-2" id="companyTagline"></p>
+                    <p class="text-muted-custom mb-0 stk-description" id="companyDescription"></p>
+                  </div>
+                </div>
+                <div class="col-md-7">
+                  <div class="mkt-panel h-100">
+                    <div class="mkt-panel-head">
+                      <h5 class="mkt-panel-title"><i class="bi bi-people"></i> Ownership Pattern</h5>
+                    </div>
+                    <div id="ownershipPattern"></div>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="mkt-panel h-100">
+                    <div class="mkt-panel-head">
+                      <h5 class="mkt-panel-title"><i class="bi bi-calendar-event"></i> Next Earnings</h5>
+                    </div>
+                    <div id="earningsRelease"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stk-pane d-none" id="pane-financials">
+              <div class="segmented-tabs mb-3" id="fundamentalsModeTabs">
+                <button class="seg-btn active" data-mode="quarterly">Quarterly</button>
+                <button class="seg-btn" data-mode="annual">Annual</button>
+              </div>
+              <div class="mkt-panel">
+                <div class="mkt-panel-head">
+                  <h5 class="mkt-panel-title"><i class="bi bi-list-columns-reverse"></i> Income Statement</h5>
+                </div>
+                <div class="stk-chart-wrap stk-chart-wrap--short mb-3"><canvas id="incomeChart"></canvas></div>
+                <div class="table-responsive">
+                  <table class="table table-custom mb-0" id="incomeTable"></table>
+                </div>
+                <p class="text-muted-custom small text-center py-3 mb-0 d-none" id="incomeMessage"></p>
+              </div>
+            </div>
+
+            <div class="stk-pane d-none" id="pane-technicals">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="mkt-panel h-100">
+                    <div class="mkt-panel-head">
+                      <h5 class="mkt-panel-title"><i class="bi bi-bar-chart-line"></i> Technical Indicators</h5>
+                    </div>
+                    <div id="technicalIndicators"></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mkt-panel h-100">
+                    <div class="mkt-panel-head">
+                      <h5 class="mkt-panel-title"><i class="bi bi-graph-up"></i> Moving Averages</h5>
+                    </div>
+                    <div id="movingAverages"></div>
+                  </div>
+                </div>
+              </div>
+              <p class="text-muted-custom small mt-3 mb-0">Indicators are calculated from one year of daily closing prices. They are not investment advice.</p>
+            </div>
+          </div>
+
+          <!-- Order ticket -->
+          <div class="stk-layout-order">
+            <div class="mkt-panel stk-order">
+              <div class="stk-side-tabs mb-3">
+                <span class="stk-side-label">Buy</span>
+              </div>
+
+              <div class="segmented-tabs w-100 mb-3" id="orderSizingTabs">
+                <button type="button" class="seg-btn active flex-fill" data-sizing="shares">By Shares</button>
+                <button type="button" class="seg-btn flex-fill" data-sizing="amount">By Amount</button>
+              </div>
+
+              <form id="orderForm" novalidate>
+                <div class="row g-3 mb-3">
+                  <div class="col-6">
+                    <label class="form-label-custom" for="orderQuantity" id="orderQuantityLabel">Quantity</label>
+                    <div class="stk-prefixed-input" id="orderQuantityWrap">
+                      <span class="stk-input-prefix">$</span>
+                      <input type="number" id="orderQuantity" min="1" step="1" value="1" class="form-control form-control-custom" />
+                    </div>
+                  </div>
+                  <div class="col-6" id="orderCategoryGroup">
+                    <label class="form-label-custom" for="orderCategory">Order type</label>
+                    <select id="orderCategory" class="form-select form-select-custom">
+                      <option value="market_price">Market</option>
+                      <option value="limit">Limit</option>
+                      <option value="stop">Stop</option>
+                      <option value="stop_limit">Stop Limit</option>
+                    </select>
+                  </div>
+                  <div class="col-6 d-none" id="limitPriceGroup">
+                    <label class="form-label-custom" for="orderLimitPrice">Limit price</label>
+                    <input type="number" id="orderLimitPrice" min="0" step="0.01" class="form-control form-control-custom" />
+                  </div>
+                  <div class="col-6 d-none" id="stopPriceGroup">
+                    <label class="form-label-custom" for="orderStopPrice">Stop price</label>
+                    <input type="number" id="orderStopPrice" min="0" step="0.01" class="form-control form-control-custom" />
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label-custom" for="orderValidity">Validity</label>
+                    <select id="orderValidity" class="form-select form-select-custom">
+                      <option value="DAY">Day</option>
+                      <option value="GTC">Good till cancelled</option>
+                    </select>
+                  </div>
+                  <div class="col-6" id="orderExchangeGroup">
+                    <label class="form-label-custom" for="orderExchange">Exchange</label>
+                    <select id="orderExchange" class="form-select form-select-custom">
+                      <option value="nasdaq">NASDAQ</option>
+                      <option value="nyse">NYSE</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field-error mb-3" id="orderFormError"></div>
+
+                <div class="stk-order-summary mb-3">
+                  <div class="stk-order-estimate" id="orderEstimateRow">
+                    <span class="text-muted-custom">Estimated cost</span>
+                    <span class="fw-semibold" id="orderEstimate">—</span>
+                  </div>
+                  <div class="stk-buying-power">Buying Power: <span id="orderBuyingPower">—</span></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom w-100 py-2" id="previewOrderButton">Preview Order</button>
+              </form>
+
+              <div class="alert alert-success mt-3 mb-0 d-none" id="orderSuccessAlert">
+                Order submitted. <a href="portfolio.html?tab=positions">View your orders</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Order confirmation -->
+  <div class="modal fade" id="orderConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content mkt-modal">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="orderConfirmTitle">Confirm order</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <div id="orderConfirmRows"></div>
+          <div class="alert alert-danger mt-3 mb-0 d-none" id="orderConfirmError"></div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary-custom" id="placeOrderButton">Place Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-4">
+          <a class="navbar-brand d-inline-block mb-3" href="index.html">Beyond<span class="text-primary-custom">ly</span></a>
+          <p class="text-muted-custom small mb-0">Beyondly is a brokerage platform for trading international equities, built on a modern API-first infrastructure covering onboarding, funding, execution, and reporting.</p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Product</h6>
+          <a href="markets.html">Markets</a>
+          <a href="trading.html">Trading</a>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="wallet.html">Wallet</a>
+          <a href="kyc.html">KYC</a>
+          <a href="reports.html">Reports</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Account</h6>
+          <a href="get-started.html">Get Started</a>
+          <a href="get-started.html">Sign In</a>
+          <a href="kyc.html">Verify Identity</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Company</h6>
+          <a href="#">About</a>
+          <a href="#">Support</a>
+          <a href="#">Contact</a>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6>Legal</h6>
+          <a href="#">Terms</a>
+          <a href="#">Privacy</a>
+          <a href="#">Risk Disclosure</a>
+        </div>
+      </div>
+      <div class="footer-disclaimer">
+        <p class="mb-1">&copy; 2026 Beyondly. All rights reserved.</p>
+        <p class="mb-0">International investing involves currency, market, and settlement risk. Trades are executed through regulated partner brokers; Beyondly does not guarantee returns.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/common/api-client.js"></script>
+  <script src="js/common/auth-guard.js"></script>
+  <script src="js/common/symbol-autocomplete.js"></script>
+  <script src="js/common/navbar.js"></script>
+  <script src="js/common/market-shared.js?v=20261119"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="js/pages/stock.js?v=20261119"></script>
+</body>
+</html>
