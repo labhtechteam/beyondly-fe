@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "beyondly-fe",
+  "compatibility_date": "2026-11-23",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "website"
+  }
+}
